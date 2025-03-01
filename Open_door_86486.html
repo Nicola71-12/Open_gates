@@ -34,7 +34,7 @@
     <script>
         async function controlGate(deviceId) {
             try {
-                let response = await fetch('http://nico12.myqnapcloud.com:5003/control', {
+                let response = await fetch('https://nico12.myqnapcloud.com:5003/control', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ device_id: deviceId, action: 'on' })
