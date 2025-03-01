@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Gates</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        h1 { margin-top: 20px; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+        .gate { background: white; padding: 15px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
+        .gate img { width: 250px; height: 200px; object-fit: cover; border-radius: 10px; }
+        button { padding: 10px 20px; font-size: 18px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 5px; margin-top: 10px; }
+        button:hover { background-color: #218838; }
+        @media (max-width: 600px) {
+            .gate img { width: 100%; height: auto; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Open Gates</h1>
+    <div class="container">
+        <div class="gate">
+            <h2>Outer gate</h2>
+            <img src="outer_gate.jpg" alt="Cancello Esterno">
+            <button onclick="controlGate('bfdfe891f9cb2f47fdfix1_1')">Open</button>
+        </div>
+        <div class="gate">
+            <h2>Inner glass gate</h2>
+            <img src="inner_glass_gate.jpg" alt="Cancello Interno">
+            <button onclick="controlGate('bfdfe891f9cb2f47fdfix1_2')">Open</button>
+        </div>
+    </div>
+    <script>
+        async function controlGate(deviceId) {
+            try {
+                let response = await fetch('http://nico12.myqnapcloud.com:5003/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ device_id: deviceId, action: 'on' })
+                });
+                let result = await response.json();
+                alert(result.status || result.error);
+            } catch (error) {
+                alert('Errore nel controllo del cancello.');
+            }
+        }
+    </script>
+</body>
+</html>
