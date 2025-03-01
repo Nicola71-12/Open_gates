@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controllo Apriporta Tuya</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Controllo Apriporta Tuya</h1>
+        <button id="apriPortaBtn1">Apri Porta 1</button>
+        <button id="apriPortaBtn2">Apri Porta 2</button>
+    </div>
+
+    <script>
+        const clientID = "xmkm7gjuttsm4y5qy8fc"; // Access ID
+        const clientSecret = "385376a04fce4698961300db181942ab"; // Access Secret
+        const deviceID = "bfdfe891f9cb2f47fdfix1"; // L'ID del dispositivo Tuya (sostituito con il tuo device ID)
+        const urlToken = "https://openapi.tuyaus.com/v1.0/token"; // Endpoint per ottenere il token
+        const urlComando = `https://openapi.tuyaus.com/v1.0/devices/${deviceID}/commands`; // Endpoint per inviare il comando
+
+        // Funzione per ottenere il token
+        function ottieniToken() {
+            const body = JSON.stringify({
+                "client_id": clientID,
+                "client_secret": clientSecret,
+                "grant_type": "client_credentials"
+            });
+
+            fetch(urlToken, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    const token = data.result.access_token;
+                    console.log('Token ottenuto:', token);
+                    // Usa il token per inviare comandi al dispositivo
+                    inviaComando(token);
+                } else {
+                    console.error('Errore ottenimento token:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Errore nell\'ottenere il token:', error);
+            });
+        }
+
+        // Funzione per inviare il comando di accensione
+        function inviaComando(token) {
+            const comando = "on"; // Comando di accensione
+
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+
+            const body = JSON.stringify({
+                "commands": [
+                    {
+                        "code": "switch_led", // La proprietà del dispositivo (modifica se necessario)
+                        "value": comando
+                    }
+                ]
+            });
+
+            fetch(urlComando, {
+                method: 'POST',
+                headers: headers,
+                body: body
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Comando inviato:', data);
+                if (data.success) {
+                    alert("Comando inviato con successo!");
+                } else {
+                    alert("Errore nell'inviare il comando: " + data);
+                }
+            })
+            .catch(error => {
+                console.error('Errore nell\'inviare il comando:', error);
+                alert('Errore nell\'inviare il comando');
+            });
+        }
+
+        // Gestione dei pulsanti
+        document.getElementById('apriPortaBtn1').addEventListener('click', function() {
+            ottieniToken();
+        });
+
+        document.getElementById('apriPortaBtn2').addEventListener('click', function() {
+            ottieniToken();
+        });
+    </script>
+</body>
+</html>
